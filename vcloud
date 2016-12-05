@@ -1,0 +1,83 @@
+
+Difference between vSphere, ESXi and vCenter
+
+http://www.mustbegeek.com/difference-between-vsphere-esxi-and-vcenter/
+
+
+
+
+How does VMware vCenter Server work and what are the benefits over vsphere client
+
+http://serverfault.com/questions/385105/how-does-vmware-vcenter-server-work-and-what-are-the-benefits-over-vsphere-clien
+
+
+
+
+
+
+vsphere
+
+vSphere is also a software suite that has many software components like vCenter, ESXi, vSphere client
+
+
+The vSphere Web Client runs in your browser and allows you connect to a vCenter Server system to manage your vSphere environment.
+
+
+
+
+
+Installing the vSphere Web Client (2032890)
+
+
+https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2032890
+
+https://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.vsphere.install.doc_50%2FGUID-1F4EB138-3301-4AC9-9B48-61166E0EBE24.html
+
+
+start the vSphere Web Client
+
+https://pubs.vmware.com/vsphere-50/index.jsp#com.vmware.vsphere.install.doc_50/GUID-31BD3873-D2AD-4B3C-BE32-DE12760D5803.html
+
+
+
+
+
+
+
+
+cloud infrastructure ::
+
+ESXi
+vsphere client
+vcenter
+vcloud director
+vcloud network and security
+vmware vcenter site recovery manager
+vshield manager
+
+
+cloud management ::
+
+
+vfabric application director
+vcloud automation center
+vcenter operations manager
+vcenter chargeback manager
+
+
+
+vcloud connector
+vcloud API
+vsphere API
+VADP
+Orchestrator
+
+
+
+
+
+
+
+
+
+
