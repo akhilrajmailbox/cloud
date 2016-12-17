@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Building Storage Services in OpenStack on NetApp &#8211; Part III of III | Keith Tenzer</title>
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="https://keithtenzer.com/xmlrpc.php" />
+<!--[if lt IE 9]>
+<script src="https://s0.wp.com/wp-content/themes/pub/reddle/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+<script type="text/javascript">
+  WebFontConfig = {"typekit":{"id":"stq4wwf"}};
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = 'https://s1.wp.com/wp-content/plugins/custom-fonts/js/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+	})();
+</script><style id="jetpack-custom-fonts-css">.wf-active #site-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active #main h1, .wf-active #main h2{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active h3{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active .page-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-weight:400;font-style:normal}.wf-active #main .entry-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active #page .image-attachment #content nav a{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active #content nav a{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active .widget-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active #comments-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active .comment .comment-author .fn{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}.wf-active .children #reply-title{font-family:"ubuntu-1","ubuntu-2",sans-serif;font-style:normal;font-weight:400}</style>
+		<script src='https://r-login.wordpress.com/remote-login.php?action=js&amp;host=keithtenzer.com&amp;id=79908823&amp;t=1481353886&amp;back=https%3A%2F%2Fkeithtenzer.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F' type="text/javascript"></script>
+		<script type="text/javascript">
+		/* <![CDATA[ */
+			if ( 'function' === typeof WPRemoteLogin ) {
+				document.cookie = "wordpress_test_cookie=test; path=/";
+				if ( document.cookie.match( /(;|^)\s*wordpress_test_cookie\=/ ) ) {
+					WPRemoteLogin();
+				}
+			}
+		/* ]]> */
+		</script>
+		<link rel='dns-prefetch' href='//s2.wp.com' />
+<link rel='dns-prefetch' href='//s1.wp.com' />
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//keithtenzer.wordpress.com' />
+<link rel="alternate" type="application/rss+xml" title="Keith Tenzer &raquo; Feed" href="https://keithtenzer.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Keith Tenzer &raquo; Comments Feed" href="https://keithtenzer.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Keith Tenzer &raquo; Building Storage Services in OpenStack on NetApp &#8211; Part III of&nbsp;III Comments Feed" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+			<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s1.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1473172720h&ver=4.6.1-RC1-38499"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJyFUtFuwyAM/KExtCnqlodp32KIR2hNjDBR1b8vlG5Vuo2+JD50x50v0ceoLC8Zl6zDqiKtzi+ij9FyUBI84ekOPVuRJ/23jPwBRe8xR7AHdUE9ekKCjJOKLPkO9WSWE5bzECFXRsDJAxKGQuvJQtx9q+o4l4hdm7a1MTGhiCrP4Neg8lyMHsQLNUpbXxfi9qRJvV44+6KWn+HXnc1Kx9WUbqaJUEs+EXYz+8lh6VLYeqBWjWo2D7UOWRFbyJ6XDVBfBD71P6QhdmV0l31vsCcCWy83kG5Tj15/i5ZEywypel3fPdW1iBKHt+C/tudBO2IDVAmf4eNleBvH1/F92O3PIzcxyA==' type='text/css' media='all' />
+<script type='text/javascript' src='https://s0.wp.com/_static/??-eJyFj+sKwjAMhV/IrHib+kN8ltrFkdqbTevQpzcD/aEOhUDIyZfDiRoSUDCudsjKSl0q5tuzNZZn6hcAnvqsCzaewgs2MRQMZWR9PJJDqIxZ96KJ0SlOcCly8cgs0MT2PRKFK+HwF7NYkjZnyMh0/3L1FZKrPQVWGZ080MGY4WOSq4Pfz1dtu14sd5utfQAruHB+'></script>
+<link rel='stylesheet' id='all-css-0-2' href='https://s1.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1377793621h' type='text/css' media='all' />
+<!--[if lt IE 8]>
+<link rel='stylesheet' id='highlander-comments-ie7-css'  href='https://s1.wp.com/wp-content/mu-plugins/highlander-comments/style-ie7.css?m=1351637563h&#038;ver=20110606' type='text/css' media='all' />
+<![endif]-->
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://keithtenzer.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Building Storage Services in OpenStack on NetApp &#8211; Part II of&nbsp;III' href='https://keithtenzer.com/2014/12/09/building-storage-services-in-openstack-on-netapp-part-ii-of-iii/' />
+<link rel='next' title='Rename network interfaces in RHEL&nbsp;7' href='https://keithtenzer.com/2014/12/12/rename-network-interfaces-in-rhel-7/' />
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/" />
+<link rel='shortlink' href='http://wp.me/p5phVZ-16' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/1.0/?format=json&amp;url=https%3A%2F%2Fkeithtenzer.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/1.0/?format=xml&amp;url=https%3A%2F%2Fkeithtenzer.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Building Storage Services in OpenStack on NetApp &#8211; Part III of III" />
+<meta property="og:url" content="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/" />
+<meta property="og:description" content="Welcome to part three of the three-part series on creating storage services in OpenStack on NetApp. In this post we will look at how to configure storage services within OpenStack utilising NetApp …" />
+<meta property="article:published_time" content="2014-12-10T15:06:36+00:00" />
+<meta property="article:modified_time" content="2015-02-15T01:04:38+00:00" />
+<meta property="og:site_name" content="Keith Tenzer" />
+<meta property="og:image" content="https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg" />
+<meta property="og:image:width" content="918" />
+<meta property="og:image:height" content="361" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:site" content="@keithtenzer" />
+<meta name="twitter:image" content="https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=240" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="@keithtenzer" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+<link rel="shortcut icon" type="image/x-icon" href="https://s2.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s2.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon-precomposed" href="https://s0.wp.com/i/webclip.png" />
+<link rel='openid.server' href='https://keithtenzer.wordpress.com/?openidserver=1' />
+<link rel='openid.delegate' href='https://keithtenzer.wordpress.com/' />
+<link rel="search" type="application/opensearchdescription+xml" href="https://keithtenzer.com/osd.xml" title="Keith Tenzer" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#A8A7A7" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Keith Tenzer" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="Cloud Computing Platforms and Code" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://keithtenzer.com/feed/;icon-uri=https://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s2.wp.com/i/favicon.ico" /><meta name="title" content="Building Storage Services in OpenStack on NetApp &#8211; Part III of&nbsp;III | Keith Tenzer on WordPress.com" />
+<meta name="description" content="Welcome to part three of the three-part series on creating storage services in OpenStack on NetApp. In this post we will look at how to configure storage services within OpenStack utilising NetApp storage.  In part one of the series we looked at how to install and configure OpenStack. In part two we looked at how to configure&hellip;" />
+	<style type="text/css">
+	#masthead img {
+		float: left;
+	}
+			#site-description {
+			color: #777 !important;
+		}
+		</style>
+	<style type="text/css" id="custom-background-css">
+body.custom-background { background-color: #A8A7A7; }
+</style>
+<link rel="amphtml" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/amp/" /><style type="text/css" id="syntaxhighlighteranchor"></style>
+<style type="text/css" id="custom-colors-css">body.custom-background{background-repeat:repeat}#access a,#access.toggled .nav-menu{border-color:#444}#access a,#access.toggled .nav-menu{border-color:rgba(68,68,68,.5)}.taxonomy-links a,.taxonomy-links a:visited,.edit-link a,.edit-link a:visited{color:#fff}#access.toggled ul ul ul{border-top-color:#444}#access.toggled ul ul ul{border-top-color:rgba(68,68,68,.5)}#access.toggled ul ul li{border-bottom-color:#444}#access.toggled ul ul li{border-bottom-color:rgba(68,68,68,.5)}#wp-calendar tbody td{border-color:#000}#wp-calendar tbody td{border-color:rgba(0,0,0,.1)}a img{border-color:#000}a img{border-color:rgba(0,0,0,.1)}hr{border-color:#000}hr{border-color:rgba(0,0,0,.1)}#access ul ul a{color:#ffe8ef}.taxonomy-links,.edit-link{color:#fff}#site-info{color:#7c7c7c}#wp-calendar tbody td{color:#fff}h3,h4,h5,h6{color:#6d6d6d}#supplementary .widget-title{color:#b2b2b2}#access ul ul li{border-color:#a41c23}#access ul ul li{border-color:rgba(164,28,35,.1)}#access ul ul{border-color:#a41c23}#access ul ul{border-color:rgba(164,28,35,.1)}body{background-color:#a8a7a7}pre{background-color:#a8a7a7}#access a,#access .menu-toggle{color:#b3b1b1}#access.toggled ul ul a,#access.toggled ul ul a:hover,#access.toggled ul ul :hover>a{color:#b3b1b1}.taxonomy-links,.edit-link,.image-attachment #content .edit-link{background-color:#a8a7a7}.comments-link a{background-color:#a8a7a7}.comments-link a:before{border-left-color:#a8a7a7}footer .permalink,.image-attachment #content footer .permalink{color:#a8a7a7}.indexed .format-image .entry-header,.indexed .format-image .entry-summary{color:#a8a7a7}.indexed .format-image a:hover,.indexed .format-image a:focus,.indexed .format-image a:active{color:#a8a7a7}.indexed .format-image .taxonomy-links a,.indexed .format-image .taxonomy-links a:hover,.indexed .format-image .taxonomy-links a:focus,.indexed .format-image .taxonomy-links a:active,.indexed .format-image .edit-link a{color:#fff}#wp-calendar tbody td{background-color:#a8a7a7}#site-title a:hover,#site-title a:focus,#site-title a:active{color:#000}#access{background-color:#000}#access ul ul{background-color:#000}#access ul ul :hover>a{background-color:#000}.entry-title a:hover,.entry-title a:focus,.entry-title a:active{color:#000}footer .permalink,.image-attachment #content footer .permalink{background-color:#000}.entry-image{background-color:#000}.indexed .format-image .entry-header,.indexed .format-image .entry-summary{background-color:#000}.indexed .format-image .taxonomy-links,.indexed .format-image .edit-link{background-color:#000}.comment .comment-author:before,.image-attachment .commentlist>.comment .comment-author:before{background-color:#000}#colophon,#supplementary{background-color:#000}#page #supplementary .widget-area{background-color:#000}a{color:#b20505}#colophon a{color:#fc0202}#wp-calendar tbody td a{color:#fff}a:visited{color:#b20505}#access li:hover>a{border-color:#b20505}#access li.current_page_item a,#access li.current-menu-item a{border-color:#b20505}.byline a:hover,.byline a:focus,.byline a:active{border-color:#b20505}.byline a:hover,.byline a:focus,.byline a:active{color:#b20505}.taxonomy-links a:hover,.taxonomy-links a:focus,.taxonomy-links a:active,.edit-link a:hover,.edit-link a:focus,.edit-link a:active,.edit-link a:visited{color:#fff}.comments-link a:hover,.comments-link a:focus,.comments-link a:active{background-color:#b20505}.comments-link a:hover:before{border-left-color:#b20505}footer .permalink:hover,footer .permalink:focus,footer .permalink:active{color:#fc0202}.comment-time:hover,.comment-time:focus,.comment-time:active{color:#b20505}#access li:hover>a{color:#f69c9c}#access ul ul *:hover>a{color:#f69c9c}.comments-link a:hover,.comments-link a:focus,.comments-link a:active{color:#b20505}img#wpstats{background-color:#b20505}</style>
+		<link rel="stylesheet" id="custom-css-css" type="text/css" href="https://s0.wp.com/?custom-css=1&#038;csblog=5phVZ&#038;cscache=6&#038;csrev=167" />
+		</head>
+
+<body class="single single-post postid-68 single-format-standard custom-background mp6 customizer-styles-applied primary secondary fluid highlander-enabled highlander-light custom-colors">
+<div id="page" class="hfeed">
+	<header id="masthead" role="banner">
+		<div class="site-branding">
+			<h1 id="site-title"><a href="https://keithtenzer.com/" title="Keith Tenzer" rel="home">Keith Tenzer</a></h1>
+			<h2 id="site-description">Cloud Computing Platforms and Code</h2>
+		</div><!-- .site-branding -->
+
+		
+				<nav id="access" role="navigation">
+			<div class="skip-link assistive-text"><a href="#content" title="Skip to content">Skip to content</a></div>
+
+			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">Main menu</button>
+			<div class="menu-menu-1-container"><ul id="primary-menu" class="menu"><li id="menu-item-679" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-679"><a href="https://keithtenzer.com/">Home</a></li>
+<li id="menu-item-680" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-680"><a href="https://keithtenzer.com/about/">About</a></li>
+<li id="menu-item-4324" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4324"><a href="https://keithtenzer.com/conferences-and-events/">Conferences and Events</a></li>
+<li id="menu-item-681" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-681"><a href="https://keithtenzer.com/contact/">Contact</a></li>
+</ul></div>		</nav><!-- #access -->
+			</header><!-- #masthead -->
+
+	<div id="main">
+		<div id="primary">
+			<div id="content" role="main">
+
+			
+					<nav id="nav-above">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="https://keithtenzer.com/2014/12/09/building-storage-services-in-openstack-on-netapp-part-ii-of-iii/" rel="prev"><span class="meta-nav">&larr;</span> Building Storage Services in OpenStack on NetApp &#8211; Part II of&nbsp;III</a></div>		<div class="nav-next"><a href="https://keithtenzer.com/2014/12/12/rename-network-interfaces-in-rhel-7/" rel="next">Rename network interfaces in RHEL&nbsp;7 <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-above -->
+	
+				
+<article id="post-68" class="post-68 post type-post status-publish format-standard hentry category-openstack tag-cloud tag-netapp tag-openstack tag-storage">
+	
+	<header class="entry-header">
+		<h1 class="entry-title">Building Storage Services in OpenStack on NetApp &#8211; Part III of&nbsp;III</h1>
+				<div class="entry-meta">
+			<span class="byline">Posted by <span class="author vcard"><a class="url fn n" href="https://keithtenzer.com/author/ktenzer1/" title="View all posts by ktenzer" rel="author">ktenzer</a></span></span>		</div><!-- .entry-meta -->
+		
+				<p class="comments-link"><a href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/#comments">1</a></p>
+			</header><!-- .entry-header -->
+
+		<div class="entry-content">
+		<p>Welcome to part three of the three-part series on creating storage services in OpenStack on NetApp. In this post we will look at how to configure storage services within OpenStack utilising NetApp storage.  In part one of the series we looked at how to install and configure OpenStack. In part two we looked at how to configure underlying NetApp storage to support OpenStack storage services.<span id="more-68"></span></p>
+<ul>
+<li><a href="https://keithtenzer.com/2014/12/05/creating-storage-services-in-openstack-on-netapp-part-i-of-iii/">Building Storage Services in OpenStack on NetApp &#8211; Part I of III</a></li>
+<li><a href="https://keithtenzer.com/2014/12/09/building-storage-services-in-openstack-on-netapp-part-ii-of-iii/">Building Storage Services in OpenStack on NetApp &#8211; Part II of III</a></li>
+</ul>
+<h3>Overview</h3>
+<p>OpenStack of course consists of many decoupled services that run independently but at the same time integrate with one another. NetApp has integrations in the following OpenStack services: Cinder (block storage), Glance (image services), Swift (object storage) and Manilla (shared file services).</p>
+<p><a href="https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg"><img class="  wp-image-105 aligncenter" src="https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=704&#038;h=277" alt="openstack_ntap_integration_overview" width="704" height="277" srcset="https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=704&amp;h=277 704w, https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=150&amp;h=59 150w, https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=300&amp;h=118 300w, https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg?w=768&amp;h=302 768w, https://keithtenzer.files.wordpress.com/2014/12/openstack_ntap_integration_overview.jpg 918w" sizes="(max-width: 704px) 100vw, 704px" /></a></p>
+<h3>Cinder Configuration</h3>
+<p>Cinder provides block storage services in OpenStack. One very important thing to keep in mind is that while Cinder presents block devices to compute resources, underlying storage such as NetApp can expose either ISCSI or NFS storage to Cinder. In my example below I am going to show you how to set up two NFS storage backends: one for primary storage and the other DR. A storage backend maps to a NetApp Clustered Data ONTAP storage virtual machine (SVM), so for each SVM you will create a storage backend in Cinder.</p>
+<h4>Edit the cinder.conf (/etc/cinder/cinder.conf)</h4>
+<p>Note: if we chose to do the RDO installation using answers file then we already configured the first storage backend cdotNfs and just need to add the backend for cdotNfsDr.</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+
+enabled_backends=cdotNfs,cdotNfsDr
+
+[cdotNfs]
+volume_backend_name=cdotNfs
+volume_driver=cinder.volume.drivers.netapp.common.NetAppDriver
+netapp_server_hostname=&lt;cluster mgmt vserver&gt;
+netapp_server_port=80
+netapp_storage_protocol=nfs
+netapp_storage_family=ontap_cluster
+netapp_login=&lt;username&gt;
+netapp_password=&lt;password&gt;
+netapp_vserver=&lt;storage virtual machine&gt;
+nfs_shares_config=/etc/cinder/cdotNfs_exports.conf
+netapp_copyoffload_tool_path=/usr/bin/na_copyoffload_64
+
+[cdotNfsDr]
+volume_backend_name=cdotNfsDr
+volume_driver=cinder.volume.drivers.netapp.common.NetAppDriver
+netapp_server_hostname=&lt;cluster mgmt vserver&gt;
+netapp_server_port=80
+netapp_storage_protocol=nfs
+netapp_storage_family=ontap_cluster
+netapp_login=&lt;username&gt;
+netapp_password=&lt;password&gt;
+netapp_vserver=&lt;storage virtual machine&gt;
+</pre>
+<h4>Edit the cdotNfs_exports.conf (/etc/cinder/cdotNfs_exports.conf)</h4>
+<p>Make the three NetApp volumes on our storage virtual machine available to Cinder backend [cdotNfs]:</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+192.168.160.100:/openstack_gold
+192.168.160.100:/openstack_silver
+192.168.160.100:/openstack_bronze
+</pre>
+<p>Note: make sure you use a data LIF on the storage virtual machine</p>
+<h4>Verify Configuration</h4>
+<p>Once we have configured our storage backends we can verify them following the below steps:</p>
+<ul>
+<li>. /root/keystonerc_admin</li>
+<li>service openstack-cinder-api restart</li>
+<li>service openstack-cinder-volume restart</li>
+<li>cinder service-list</li>
+</ul>
+<p>The &#8220;cinder service-list&#8221; command will show us the two new storage backends:</p>
+<ul>
+<li>&lt;hostname&gt;@cdotNfs</li>
+<li>&lt;hostname&gt;@cdotNfsDr</li>
+</ul>
+<h3>Glance</h3>
+<p>Glance is the images service in OpenStack. It stores and provides images as well as templates to the Nova compute service. NetApp storage provides two key benefits for Glance:</p>
+<ul>
+<li>Save network bandwidth by efficiently cloning images via copy offload driver</li>
+<li>Reduce storage requirements by enabling dedup</li>
+</ul>
+<h4>Edit the glance-api.conf (/etc/glance/glance-api.conf)</h4>
+<p>Mount a NetApp volume (openstack_glance) on the OpenStack host or the host running the glance service. The volume must be mounted at boot so make sure you add it to the /etc/fstab.</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+
+filesystem_store_datadir=/glance
+
+filesystem_store_metadata_file=/etc/glance/metadata.conf
+
+</pre>
+<h4>Edit the metadat.conf (/etc/glance/metadata.conf)</h4>
+<p>The purpose of this file is to enable glance to store images and templates on NetApp storage.</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+
+{
+&quot;share_location&quot;: &quot;nfs://192.168.160.100:/openstack_glance&quot;,
+&quot;mount_point&quot;: &quot;/glance&quot;,
+&quot;type&quot;: &quot;nfs&quot;
+}
+
+</pre>
+<h3>Enable copy offload driver</h3>
+<p>The copy offload driver allows Glance to use NetApp file cloning capabilities providing near instant image copies to the Nova compute service. Without copy offload images must be copied over the network between Glance and Nova.</p>
+<p>Copy offload requirements:</p>
+<ul class="itemizedlist" type="disc">
+<li class="listitem">The storage system must have Data ONTAP v8.2 or greater installed</li>
+<li class="listitem">To configure the <span class="highlight">copy</span> <span class="highlight">offload</span> workflow, enable NFS v4.0 or greater and export it from the SVM</li>
+<li class="listitem">The vStorage feature must be enabled on each storage virtual machine (SVM, also known as a Vserver) that is permitted to interact with the <span class="highlight">copy</span> <span class="highlight">offload</span> client. To set this feature, you can use the <code class="literal">vserver nfs modify - -vstorage enabled –v4.0 enabled</code> CLI command</li>
+</ul>
+<p>To install the copy offload driver following the following steps:</p>
+<ul>
+<li><a href="http://mysupport.netapp.com/NOW/download/tools/ntap_openstack_nfs/">Download copy offload tool</a></li>
+<li>Copy the binary to /usr/bin/na_copyoffload_64</li>
+<li>Ensure the permissions are 755</li>
+</ul>
+<h3>Create Storage Services</h3>
+<p>One of the major features of cinder is the ability to configure storage services. Below is an example of how we can create a service: gold, silver and bronze from our NetApp storage volumes. The NetApp driver for OpenStack exposes capabilities which we can use to define services.</p>
+<p>Below is a table of all the NetApp storage capabilities we can use to define services in OpenStack:</p>
+<table id="cinder.netapp.extra_specs" style="height:740px;" width="634" rules="all">
+<thead>
+<tr>
+<td style="text-align:center;">Extra spec</td>
+<td style="text-align:center;">DataType</td>
+<td style="text-align:center;">Description</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="option">netapp:raid_type</code></td>
+<td>String</td>
+<td>Limit the candidate volume list based on one of the following raid types: <code class="option">raid4</code>, <code class="option">raid_dp</code>.</td>
+</tr>
+<tr>
+<td><code class="option">netapp:disk_type</code></td>
+<td>String</td>
+<td>Limit the candidate volume list based on one of the following disk types: <code class="option">ATA</code>, <code class="option">BSAS</code>, <code class="option">EATA</code>, <code class="option">FCAL</code>,<code class="option">FSAS</code>, <code class="option">LUN</code>, <code class="option">MSATA</code>, <code class="option">SAS</code>, <code class="option">SATA</code>, <code class="option">SCSI</code>, <code class="option">XATA</code>, <code class="option">XSAS</code>, or <code class="option">SSD</code>.</td>
+</tr>
+<tr>
+<td><code class="option">netapp:qos_policy_group</code></td>
+<td>String</td>
+<td>Specify the name of a QoS policy group, which defines measurable Service Level Objectives, that should be applied to the Cinder volume at the time of volume creation. Ensure that the QoS policy group object within Data ONTAP should be defined before a Cinder volume is created, and that the QoS policy group is not associated with the destination FlexVol volume.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_mirrored</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that are mirrored on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_unmirrored</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that are not mirrored on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_dedup</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that have deduplication enabled on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_nodedup</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that have deduplication disabled on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_compression</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that have compression enabled on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_nocompression</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that have compression disabled on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_thin_provisioned</code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that support thin  provisioning on the storage controller.</td>
+</tr>
+<tr>
+<td><code class="option">netapp_thick_provisioned </code></td>
+<td>Boolean</td>
+<td>Limit the candidate volume list to only the ones that support thick   provisioning on the storage controller.</td>
+</tr>
+</tbody>
+</table>
+<h4>Gold Service</h4>
+<p>Gold &#8211; Highest performance storage (SSD) and Disaster Recovery</p>
+<ul>
+<li>cinder type-key gold set netapp_mirrored=true</li>
+</ul>
+<h4>Silver Service</h4>
+<p>Silver &#8211; Highest performance storage with compression</p>
+<ul>
+<li>cinder type-key silver set netapp_compression=true</li>
+</ul>
+<h4>Bronze Service</h4>
+<p>Bronze Lower performance storage with dedup</p>
+<ul>
+<li>cinder type-key bronze setnetapp_dedup=true</li>
+</ul>
+<p>Note: you can add more than one capability to a storage service.</p>
+<h3> Create Instance using Storage Services</h3>
+<p>Finally we can use the storage services to create a cinder volume and spawn an instance based on the new cinder volume. Log into the OpenStack UI horizon. Under project-&gt;volumes select &#8220;create volume&#8221;. You can now select a storage service (gold, silver or bronze), create a cinder volume and attach it to an OS image. Below is an example:</p>
+<p><a href="https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png"><img class="  wp-image-65 aligncenter" src="https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png?w=617&#038;h=555" alt="Screen Shot 2014-12-02 at 18.25.18" width="617" height="555" srcset="https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png?w=617&amp;h=555 617w, https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png?w=150&amp;h=135 150w, https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png?w=300&amp;h=270 300w, https://keithtenzer.files.wordpress.com/2014/12/screen-shot-2014-12-02-at-18-25-18.png 698w" sizes="(max-width: 617px) 100vw, 617px" /></a></p>
+<p>(c) 2014 Keith Tenzer</p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow" data-shared="sharing-twitter-68" class="share-twitter sd-button share-icon" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/?share=twitter" target="_blank" title="Click to share on Twitter"><span>Twitter</span></a></li><li class="share-linkedin"><a rel="nofollow" data-shared="sharing-linkedin-68" class="share-linkedin sd-button share-icon" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/?share=linkedin" target="_blank" title="Click to share on LinkedIn"><span>LinkedIn</span></a></li><li class="share-email"><a rel="nofollow" data-shared="" class="share-email sd-button share-icon" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/?share=email" target="_blank" title="Click to email"><span>Email</span></a></li><li class="share-print"><a rel="nofollow" data-shared="" class="share-print sd-button share-icon" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/#print" target="_blank" title="Click to print"><span>Print</span></a></li><li class="share-end"></li></ul></div></div></div><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-79908823-68-584baa9eb7b90' data-src='//widgets.wp.com/likes/#blog_id=79908823&amp;post_id=68&amp;origin=keithtenzer.wordpress.com&amp;obj_id=79908823-68-584baa9eb7b90' data-name='like-post-frame-79908823-68-584baa9eb7b90'><h3 class='sd-title'>Like this:</h3><div class='likes-widget-placeholder post-likes-widget-placeholder' style='height: 55px;'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div></div>			</div><!-- .entry-content -->
+	
+		<footer class="entry-meta">
+								<p class="cat-links taxonomy-links">
+				Posted in <a href="https://keithtenzer.com/category/openstack/" rel="category tag">OpenStack</a>			</p>
+			
+						<p class="tag-links taxonomy-links">
+				Tagged <a href="https://keithtenzer.com/tag/cloud/" rel="tag">Cloud</a>, <a href="https://keithtenzer.com/tag/netapp/" rel="tag">NetApp</a>, <a href="https://keithtenzer.com/tag/openstack/" rel="tag">OpenStack</a>, <a href="https://keithtenzer.com/tag/storage/" rel="tag">Storage</a>			</p>
+					
+		<p class="date-link"><a href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/" title="Permalink to Building Storage Services in OpenStack on NetApp &#8211; Part III of&nbsp;III" rel="bookmark" class="permalink"><span class="month">Dec</span><span class="sep">&middot;</span><span class="day">10</span></a></p>
+
+			</footer><!-- #entry-meta -->
+	</article><!-- #post-## -->
+
+				
+<div id="comments">
+
+			<h2 id="comments-title">
+			One thought on &ldquo;<span>Building Storage Services in OpenStack on NetApp &#8211; Part III of&nbsp;III</span>&rdquo;		</h2>
+
+		
+		<ol class="commentlist">
+			
+	<li class="comment even thread-even depth-1 highlander-comment" id="li-comment-749">
+		<article id="comment-749" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+					<img alt='' src='https://2.gravatar.com/avatar/5564914a63ad1bb81a68b28c83b1e4da?s=47&#038;d=identicon&#038;r=G' class='avatar avatar-47' height='47' width='47' />					<cite class="fn">Dmitry</cite>
+				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a class="comment-time" href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/#comment-749"><time pubdate datetime="2015-12-15T16:52:08+00:00">
+					December 15, 2015 at 4:52 pm					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>In kilo release metadata.conf file should look like<br />
+vi /etc/glance/metadata.conf<br />
+{<br />
+&#8220;id&#8221;: &#8220;NetApp1&#8221;,<br />
+&#8220;share_location&#8221;: &#8220;nfs://netapp_ip_address/netapp_share&#8221;,<br />
+&#8220;mountpoint&#8221;: &#8220;/glance&#8221;,<br />
+&#8220;type&#8221;: &#8220;nfs&#8221;<br />
+}</p>
+<p>Note &#8220;mountpoint&#8221; spelled without underscore</p>
+<p id="comment-like-749" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/?like_comment=749&#038;_wpnonce=3b8071d4dc" class="comment-like-link needs-login" rel="nofollow" data-blog="79908823"><span>Like</span></a><span id="comment-like-count-749" class="comment-like-feedback">Like</span></p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/?replytocom=749#respond' onclick='return addComment.moveForm( "comment-749", "749", "respond", "68" )' aria-label='Reply to Dmitry'>Reply</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+	
+					<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/#respond" style="display:none;">Cancel reply</a></small></h3>				<form action="https://keithtenzer.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="8736252d6c" /><input type="hidden" name="_wp_http_referer" value="/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/" />
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest" />
+
+<div class="comment-form-field comment-textarea">
+	<label for="comment">Enter your comment here...</label>
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..."></textarea></div>
+</div>
+
+<div id="comment-form-identity">
+
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="#comment-form-guest" id="postas-guest" title="Guest">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:WordPress.com" id="postas-wordpress" title="WordPress.com">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Twitter" id="postas-twitter" title="Twitter">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="#comment-form-load-service:Facebook" id="postas-facebook" title="Facebook">
+					<span></span>
+				</a>
+			</li>
+			<li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="url" value="" /></div>
+				</div>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="WordPress.com Logo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="" />
+				<p class="comment-form-posting-as pa-wordpress"><strong></strong> You are commenting using your WordPress.com account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Twitter picture" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="" />
+				<p class="comment-form-posting-as pa-twitter"><strong></strong> You are commenting using your Twitter account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Facebook photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="" />
+				<p class="comment-form-posting-as pa-facebook"><strong></strong> You are commenting using your Facebook account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-googleplus" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Google+ photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="googleplus_avatar" id="googleplus-avatar" class="comment-meta-googleplus" value="" />
+				<input type="hidden" name="googleplus_user_id" id="googleplus-user_id" class="comment-meta-googleplus" value="" />
+				<input type="hidden" name="googleplus_access_token" id="googleplus-access_token" class="comment-meta-googleplus" value="" />
+				<p class="comment-form-posting-as pa-googleplus"><strong></strong> You are commenting using your Google+ account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'googleplus' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function(){
+	var input = document.createElement( 'input' ),
+	    comment = jQuery( '#comment' );
+
+	if ( 'placeholder' in input ) {
+		comment.attr( 'placeholder', jQuery( '.comment-textarea label' ).remove().text() );
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	jQuery( '#comment-form-identity' ).hide();
+	jQuery( '#comment-form-subscribe' ).hide();
+	jQuery( '#commentform .form-submit' ).hide();
+
+	comment.css( { 'height':'10px' } ).one( 'focus', function() {
+		var timer = setInterval( HighlanderComments.resizeCallback, 10 )
+		jQuery( this ).animate( { 'height': HighlanderComments.initialHeight } ).delay( 100 ).queue( function(n) { clearInterval( timer ); HighlanderComments.resizeCallback(); n(); } );
+		jQuery( '#comment-form-identity' ).slideDown();
+		jQuery( '#comment-form-subscribe' ).slideDown();
+		jQuery( '#commentform .form-submit' ).slideDown();
+	});
+}
+jQuery(document).ready( highlander_expando_javascript );
+</script>
+
+<div id="comment-form-subscribe">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;"/> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p></div>
+
+
+
+
+<p class="form-submit"><input name="submit" type="submit" id="comment-submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='68' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="1d7987f557" /></p>
+<input type="hidden" name="genseq" value="1481353886" />
+<p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="16"/></p>				</form>
+					</div><!-- #respond -->
+		<div style="clear: both"></div>
+</div><!-- #comments -->
+
+					<nav id="nav-below">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="https://keithtenzer.com/2014/12/09/building-storage-services-in-openstack-on-netapp-part-ii-of-iii/" rel="prev"><span class="meta-nav">&larr;</span> Building Storage Services in OpenStack on NetApp &#8211; Part II of&nbsp;III</a></div>		<div class="nav-next"><a href="https://keithtenzer.com/2014/12/12/rename-network-interfaces-in-rhel-7/" rel="next">Rename network interfaces in RHEL&nbsp;7 <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-below -->
+	
+			
+			</div><!-- #content -->
+		</div><!-- #primary -->
+
+
+<div id="secondary" class="widget-area" role="complementary">
+	<aside id="rss_links-5" class="widget widget_rss_links"><h1 class="widget-title">Subscribe to RSS</h1><p class="size-small"><a class="feed-image-link" href="https://keithtenzer.com/feed/" title="Subscribe to Posts"><img src="https://keithtenzer.com/i/rss/red-small.png" alt="RSS Feed" /></a></p>
+</aside><aside id="wpcom_social_media_icons_widget-3" class="widget widget_wpcom_social_media_icons_widget"><ul><li><a title="View keithtenzer&#8217;s profile on Twitter" href="https://twitter.com/keithtenzer/" class="genericon genericon-twitter" target="_blank"><span class="screen-reader-text">View keithtenzer&#8217;s profile on Twitter</span></a></li><li><a title="View keithtenzer&#8217;s profile on LinkedIn" href="https://www.linkedin.com/in/keithtenzer/" class="genericon genericon-linkedin" target="_blank"><span class="screen-reader-text">View keithtenzer&#8217;s profile on LinkedIn</span></a></li><li><a title="View ktenzer&#8217;s profile on GitHub" href="https://github.com/ktenzer/" class="genericon genericon-github" target="_blank"><span class="screen-reader-text">View ktenzer&#8217;s profile on GitHub</span></a></li></ul></aside><aside id="search-5" class="widget widget_search"><form method="get" id="searchform" action="https://keithtenzer.com/">
+	<label for="s" class="assistive-text">Search</label>
+	<input type="text" class="field" name="s" id="s" placeholder="Search" />
+	<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
+</form>
+</aside><aside id="categories-5" class="widget widget_categories"><h1 class="widget-title">Categories</h1><label class="screen-reader-text" for="cat">Categories</label><select  name='cat' id='cat' class='postform' >
+	<option value='-1'>Select Category</option>
+	<option class="level-0" value="4011177">Ansible</option>
+	<option class="level-0" value="144203">AWS</option>
+	<option class="level-0" value="335778">Azure</option>
+	<option class="level-0" value="56729533">CloudForms</option>
+	<option class="level-0" value="20099">Clustering</option>
+	<option class="level-0" value="182564">Containers</option>
+	<option class="level-0" value="54">General</option>
+	<option class="level-0" value="75342">KVM</option>
+	<option class="level-0" value="73156029">OpenShift</option>
+	<option class="level-0" value="13108840">OpenStack</option>
+	<option class="level-0" value="27218539">RHEV</option>
+	<option class="level-0" value="39265">Satellite</option>
+	<option class="level-0" value="1">Uncategorized</option>
+</select>
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+(function() {
+	var dropdown = document.getElementById( "cat" );
+	function onCatChange() {
+		if ( dropdown.options[ dropdown.selectedIndex ].value > 0 ) {
+			location.href = "https://keithtenzer.com/?cat=" + dropdown.options[ dropdown.selectedIndex ].value;
+		}
+	}
+	dropdown.onchange = onCatChange;
+})();
+/* ]]> */
+</script>
+
+</aside><aside id="archives-7" class="widget widget_archive"><h1 class="widget-title">Archives</h1>		<label class="screen-reader-text" for="archives-dropdown-7">Archives</label>
+		<select id="archives-dropdown-7" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">Select Month</option>
+				<option value='https://keithtenzer.com/2016/11/'> November 2016 </option>
+	<option value='https://keithtenzer.com/2016/10/'> October 2016 </option>
+	<option value='https://keithtenzer.com/2016/09/'> September 2016 </option>
+	<option value='https://keithtenzer.com/2016/08/'> August 2016 </option>
+	<option value='https://keithtenzer.com/2016/07/'> July 2016 </option>
+	<option value='https://keithtenzer.com/2016/05/'> May 2016 </option>
+	<option value='https://keithtenzer.com/2016/04/'> April 2016 </option>
+	<option value='https://keithtenzer.com/2016/03/'> March 2016 </option>
+	<option value='https://keithtenzer.com/2016/01/'> January 2016 </option>
+	<option value='https://keithtenzer.com/2015/12/'> December 2015 </option>
+	<option value='https://keithtenzer.com/2015/11/'> November 2015 </option>
+	<option value='https://keithtenzer.com/2015/10/'> October 2015 </option>
+	<option value='https://keithtenzer.com/2015/09/'> September 2015 </option>
+	<option value='https://keithtenzer.com/2015/08/'> August 2015 </option>
+	<option value='https://keithtenzer.com/2015/07/'> July 2015 </option>
+	<option value='https://keithtenzer.com/2015/06/'> June 2015 </option>
+	<option value='https://keithtenzer.com/2015/05/'> May 2015 </option>
+	<option value='https://keithtenzer.com/2015/04/'> April 2015 </option>
+	<option value='https://keithtenzer.com/2015/03/'> March 2015 </option>
+	<option value='https://keithtenzer.com/2015/02/'> February 2015 </option>
+	<option value='https://keithtenzer.com/2015/01/'> January 2015 </option>
+	<option value='https://keithtenzer.com/2014/12/'> December 2014 </option>
+
+		</select>
+		</aside><aside id="blog_subscription-5" class="widget widget_blog_subscription"><h1 class="widget-title"><label for="subscribe-field">Follow Blog via Email</label></h1>
+				<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" id="subscribe-blog">
+											<p>Enter your email address to follow this blog and receive notifications of new posts by email.</p>
+<p>Join 108 other followers</p>
+						<p><input type="text" name="email" style="width: 95%; padding: 1px 2px" placeholder="Enter your email address" value="" id="subscribe-field"/></p>
+					
+					<p>
+						<input type="hidden" name="action" value="subscribe"/>
+						<input type="hidden" name="blog_id" value="79908823"/>
+						<input type="hidden" name="source" value="https://keithtenzer.com/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/"/>
+						<input type="hidden" name="sub-type" value="widget"/>
+						<input type="hidden" name="redirect_fragment" value="blog_subscription-5" />
+						<input type="hidden" id="_wpnonce" name="_wpnonce" value="17860d9a9b" />						<input type="submit" value="Follow" />
+					</p>
+				</form>
+			
+</aside>		<aside id="recent-posts-9" class="widget widget_recent_entries">		<h1 class="widget-title">Recent Posts</h1>		<ul>
+					<li>
+				<a href="https://keithtenzer.com/2016/11/23/deploying-openshift-enterprise-from-ansible-tower/">Deploying OpenShift Enterprise from Ansible&nbsp;Tower</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/11/21/openshift-enterprise-3-3-all-in-one-lab-environment-with-jenkins-build-pipeline/">OpenShift Enterprise 3.3: all-in-one Lab Environment with Jenkins Build&nbsp;Pipeline</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/10/14/enterprise-container-platform-in-the-cloud-openshift-on-azure-secured-by-azure-ad/">Enterprise Container Platform in the Cloud: OpenShift on Azure secured by Azure&nbsp;AD</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/09/12/openstack-integrating-ceph-as-storage-backend/">OpenStack: Integrating Ceph as Storage&nbsp;Backend</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/09/12/ceph-1-3-lab-installation-and-configuration-guide/">Ceph 1.3 Lab Installation and Configuration&nbsp;Guide</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/09/09/ceph-the-future-of-storage/">Ceph: the future of&nbsp;Storage</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/09/01/openstack-mitaka-lab-installation-and-configuration-guide/">OpenStack Mitaka Lab Installation and Configuration&nbsp;Guide</a>
+						</li>
+					<li>
+				<a href="https://keithtenzer.com/2016/08/23/cloud-systems-management-satellite-6-2-getting-started-guide/">Cloud Systems Management: Satellite 6.2 Getting Started&nbsp;Guide</a>
+						</li>
+				</ul>
+		</aside>		<aside id="twitter_timeline-7" class="widget widget_twitter_timeline"><h1 class="widget-title">Follow me on Twitter</h1><a class="twitter-timeline" data-height="400" data-theme="light" data-link-color="#f96e5b" data-border-color="#e8e8e8" data-lang="EN" data-widget-id="524649289880850434">My Tweets</a></aside><aside id="linkcat-1356" class="widget widget_links"><h1 class="widget-title">Blogroll</h1>
+	<ul class='xoxo blogroll'>
+<li><a href="http://www.opensourcerers.org/" rel="contact met colleague co-resident">OPEN SOURCERERS</a></li>
+<li><a href="http://opensource.com/">OpenSource.com</a></li>
+
+	</ul>
+</aside>
+</div><!-- #secondary .widget-area -->
+
+
+	</div><!-- #main -->
+
+	<footer id="colophon" role="contentinfo">
+		
+		<div id="site-info">
+						<a href="https://wordpress.com/?ref=footer_blog">Blog at WordPress.com.</a>
+			
+					</div>
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+<!--  -->
+		<script type="text/javascript">
+			!function(d,s,id){
+				var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+				if(!d.getElementById(id)){
+					js=d.createElement(s);
+					js.id=id;js.src=p+"://platform.twitter.com/widgets.js";
+					fjs.parentNode.insertBefore(js,fjs);
+				}
+			}(document,"script","twitter-wjs");
+		</script>
+		<script type='text/javascript' src='//0.gravatar.com/js/gprofiles.js?ver=201649y'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781h'></script>
+
+	<script>
+		//initialize and attach hovercards to all gravatars
+		jQuery( document ).ready( function( $ ) {
+
+			if (typeof Gravatar === "undefined"){
+				return;
+			}
+
+			if ( typeof Gravatar.init !== "function" ) {
+				return;
+			}			
+
+			Gravatar.profile_cb = function( hash, id ) {
+				WPGroHo.syncProfileData( hash, id );
+			};
+			Gravatar.my_hash = WPGroHo.my_hash;
+			Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+		});
+	</script>
+
+		<div style="display:none">
+	<div class="grofile-hash-map-5564914a63ad1bb81a68b28c83b1e4da">
+	</div>
+	</div>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/keithtenzer.wordpress.com\/public.api\/connect\/?action=request","logoutURL":"https:\/\/keithtenzer.wordpress.com\/wp-login.php?action=logout&_wpnonce=6c44fb3dd0","homeURL":"https:\/\/keithtenzer.com\/","postID":"68","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"0","userIsLoggedIn":"","isJetpack":"0","text_direction":"ltr"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/_static/??/wp-content/js/jquery/jquery.autoresize.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1479964158j'></script>
+
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/keithtenzer.com\/2014\/12\/10\/building-storage-services-in-openstack-on-netapp-part-iii-of-iii\/":68};
+	</script>
+		<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-twitter' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-linkedin' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomlinkedin', 'menubar=1,resizable=1,width=580,height=450' );
+				return false;
+			});
+		});
+		</script>
+			<div id="sharing_email" style="display: none;">
+		<form action="/2014/12/10/building-storage-services-in-openstack-on-netapp-part-iii-of-iii/" method="post">
+			<label for="target_email">Send to Email Address</label>
+			<input type="email" name="target_email" id="target_email" value="" />
+
+			
+				<label for="source_name">Your Name</label>
+				<input type="text" name="source_name" id="source_name" value="" />
+
+				<label for="source_email">Your Email Address</label>
+				<input type="email" name="source_email" id="source_email" value="" />
+
+						<input type="text" id="jetpack-source_f_name" name="source_f_name" class="input" value="" size="25" autocomplete="off" />
+			<script> document.getElementById('jetpack-source_f_name').value = ''; </script>
+			<div class="recaptcha" id="sharing_recaptcha"></div><input type="hidden" name="recaptcha_public_key" id="recaptcha_public_key" value="6LcYW8MSAAAAADBAuEH9yaPcF7lWh11Iq62ZKtoo" />
+			<img style="float: right; display: none" class="loading" src="https://s2.wp.com/wp-content/mu-plugins/post-flair/sharing/images/loading.gif" alt="loading" width="16" height="16" />
+			<input type="submit" value="Send Email" class="sharing_send" />
+			<a rel="nofollow" href="#cancel" class="sharing_cancel">Cancel</a>
+
+			<div class="errors errors-1" style="display: none;">
+				Post was not sent - check your email addresses!			</div>
+
+			<div class="errors errors-2" style="display: none;">
+				Email check failed, please try again			</div>
+
+			<div class="errors errors-3" style="display: none;">
+				Sorry, your blog cannot share posts by email.			</div>
+		</form>
+	</div>
+<script type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/akismet-3.0/_inc/form.js?m=1404442431h'></script>
+<script type='text/javascript' src='https://s1.wp.com/_static/??-eJzTLy/QTc7PK0nNK9EvyClNz8wr1i+uzCtJrMjITM/IAeKS1CJMEWP94uSizIISoOIM5/yiVL2sYh19yo1yKiotzgjISczMAxpon2traGJkZGxiZGhskgUAFHlAaw=='></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "https://s0.wp.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "https://s0.wp.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?m=1363304414h&amp;ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.defaults['toolbar'] = false;
+	SyntaxHighlighter.all();
+</script>
+<link rel='stylesheet' id='all-css-0-3' href='https://s2.wp.com/wp-content/mu-plugins/genericons/genericons/genericons.css?m=1443615899h' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var comment_like_text = {"loading":"Loading..."};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var actionbardata = {"siteID":"79908823","siteName":"Keith Tenzer","siteURL":"https:\/\/keithtenzer.com","icon":"<img alt='' src='https:\/\/s1.wp.com\/i\/void.gif' class='avatar avatar-36' height='36' width='36' \/>","canManageOptions":"","canCustomizeSite":"","isFollowing":"","themeSlug":"pub\/reddle","signupURL":"https:\/\/wordpress.com\/start\/","loginURL":"https:\/\/keithtenzer.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fkeithtenzer.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F","themeURL":"https:\/\/wordpress.com\/themes\/reddle\/","xhrURL":"https:\/\/keithtenzer.com\/wp-admin\/admin-ajax.php","nonce":"6e60fbdd16","isSingular":"1","isFolded":"","isLoggedIn":"","isMobile":"","subscribeNonce":"<input type=\"hidden\" id=\"_wpnonce\" name=\"_wpnonce\" value=\"17860d9a9b\" \/>","referer":"https:\/\/keithtenzer.com\/2014\/12\/10\/building-storage-services-in-openstack-on-netapp-part-iii-of-iii\/","canFollow":"1","statusMessage":"","customizeLink":"https:\/\/keithtenzer.wordpress.com\/wp-admin\/customize.php?url=https%3A%2F%2Fkeithtenzer.wordpress.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F","postID":"68","shortlink":"http:\/\/wp.me\/p5phVZ-16","canEditPost":"","editLink":"https:\/\/wordpress.com\/post\/keithtenzer.com\/68","i18n":{"view":"View Site","follow":"Follow","following":"Following","edit":"Edit","login":"Log In","signup":"Sign Up","customize":"Customize","report":"Report this content","themeInfo":"Get theme: Reddle","shortlink":"Copy shortlink","copied":"Copied","followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar","editFollows":"Manage Sites I Follow","editSubs":"Manage Subscriptions","viewReader":"View Site in the Reader","subscribe":"Sign me up","enterEmail":"Enter your email address","followers":"Join 108 other followers","alreadyUser":"Already have a WordPress.com account? <a href=\"https:\/\/keithtenzer.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fkeithtenzer.com%2F2014%2F12%2F10%2Fbuilding-storage-services-in-openstack-on-netapp-part-iii-of-iii%2F\">Log in now.<\/a>"}};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var sharing_js_options = {"lang":"en","counts":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/_static/??-eJyVjsFuwjAQRH+oZqlApBfEtzj2kmyw1+7aTuDvsVURlR4i9bSrmXmjgSUqEzgjZ5gSWJzJYLzvpvQBvyxfVHRlIE7g6IYJvgsWHDVbh7IRNsH7KqkfaGp0D2mhiP+B3oS/YB7R11gsPQjauqcRrGcadKbArzixccW+9wlG99h54o0x2lZf9VrA65RR6qfCjCLUylZtq8G0Ha1h/TbSMaSsrk6TQBq1EA+vW6GLP38eu9Ph8HXq9tMToUamFg=='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<iframe src='https://widgets.wp.com/likes/master.html?ver=20160429#ver=20160429' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+		<div id='likes-other-gravatars'><div class="likes-text"><span>%d</span> bloggers like this:</div><ul class="wpl-avatars sd-like-gravatars"></ul></div>
+		<script>
+			var _comscore = _comscore || [];
+			_comscore.push({
+				c1: "2",
+				c2: "7518284"
+			});
+			(function() {
+				var s = document.createElement("script"),
+					el = document.getElementsByTagName("script")[0];
+				s.async = true;
+				s.src = (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js";
+				el.parentNode.insertBefore(s, el);
+			})();
+		</script>
+		<noscript>
+			<p class="robots-nocontent"><img src="https://sb.scorecardresearch.com/p?c1=2&c2=7518284&c3=&c4=&c5=&c6=&c15=&cv=2.0&cj=1" alt="" style="display:none;" width="1" height="1" /></p>
+		</noscript><script src="//stats.wp.com/w.js?55" type="text/javascript" async defer></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'79908823','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'79908823','v':'wpcom','tz':'0','user_id':'0','post':'68','subd':'keithtenzer'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1TaVhzUzFMbjdWNHpwZGhTayxPSUFCMGRVYVNrSFguN3FwSmQ5RGtNX3VQcj1yVzhiflM1THQtLGFdQ2toOXYlcnhFX21LVC0tRmNMVkJscFkyPzNNMy1sL25JfF1lYWRXK1d+LTR8TndlejUsUnEtanJLS2UsRHJuLDM0PWxnWGRlSXJhX3hnNGtIaHhdSHUtRldqbXlyUGo/fFpxW3RNQk5KclFxYiUtVlU9Z0swTVRnLXlFUFdzWWxXU2pacFFpXThIN1Q5Yk1pLGRBZ0RJWT9JVGQyemdfX2U3LGZYU0RvfGVjfDZ+cX43MTcrYWFkTy4uY3UmU0NTV1YsTHVQPW5pdjZxWXVuL3lXZ1U/Yl9XPXdJRGV1Uitdb0oyc3E9Q2JMeEZEa1VtLGhnbENPTyVdNXxIQTdtcnkrSmhfLi5+MHcvRkM3bFtpMG5PREJndGc4SXBXckw4'}]);
+_stq.push([ 'clickTrackerInit', '79908823', '68' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>
+<!--
+	generated 8 seconds ago
+	generated in 0.117 seconds
+	served from batcache in 0.001 seconds
+	expires in 292 seconds
+-->

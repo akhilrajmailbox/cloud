@@ -1,0 +1,32 @@
+
+openstack-basics >>>
+https://keithtenzer.com/2015/01/26/openstack-multiple-node-configurations/
+https://keithtenzer.com/2014/12/05/creating-storage-services-in-openstack-on-netapp-part-i-of-iii/
+
+*****************************************************************************************************
+
+promiscous mode configuration >>>
+http://unix.stackexchange.com/questions/198076/enable-promiscous-mode-in-centos-7
+
+*****************************************************************************************************
+
+interface configuration >>>
+http://askubuntu.com/questions/649353/ubuntu-14-04-setting-static-ip-for-server-on-virtualbox
+
+*****************************************************************************************************
+
+openstack installation (juno) >>>
+https://github.com/ChaimaGhribi/OpenStack-Juno-Installation/blob/master/OpenStack-Juno-Installation.rst
+http://docs.openstack.org/juno/install-guide/install/apt/openstack-install-guide-apt-juno.pdf
+
+*****************************************************************************************************
+
+CIDR calculation >>>
+http://www.ipaddressguide.com/cidr#range
+
+*****************************************************************************************************
+
+network clean up in openstack >>>
+https://saliux.wordpress.com/2014/04/16/clean-up-openstack-router-and-networks/
+
+*****************************************************************************************************

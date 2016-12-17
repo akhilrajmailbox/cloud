@@ -1,0 +1,80 @@
+ubuntu14.04-controller		
+	
+	nic 	   : 1			management n/w : 10.0.0.11/24
+	cpu 	   : 2			
+	mem 	   : 4G			rabbitmq	user: guest,     pass: ubuntu		mysql 		user: root, 	 pass: ubuntu
+	storage    : 15G		db		user: keystone,	 pass: ubuntu		db		user: neutron,	 pass: ubuntu
+					tenents		user: admin,	 pass: ubuntu		METADATA	user:		 pass: ubuntu
+	hostname   : controller		tenents		user: demo,	 pass: ubuntu
+	username   : bizruntime		db		user: glance,	 pass: ubuntu
+	password   : standard		db		user: nova,	 pass: ubuntu
+					
+ubuntu14.04-network
+
+	nic 	   : 3			management n/w : 10.0.0.21/24			
+	cpu 	   : 1			tunnel n/w     : 10.0.1.21/24
+	mem 	   : 4G			external n/w   : 192.168.1.0/24
+	storage    : 15G
+
+	hostname   : network
+	username   : bizruntime
+	password   : standard
+
+ubuntu14.04-compute
+	
+	nic 	   : 2			management n/w : 10.0.0.31/24
+	cpu 	   : 2			tunnel n/w     : 10.0.1.31/24
+	mem 	   : 4G			
+	storage    : 15G
+	
+	hostname   : compute1
+	username   : bizruntime
+	password   : standard
+
+Management on 10.0.0.0/24 with gateway 10.0.0.1
+Instance tunnels on 10.0.1.0/24 without a gateway
+External on 192.168.1.0/24 with gateway 192.168.1.1
+
+
+*********************************************************************************
+make promiscous mode :: ip link set em1 promisc on
+check :: dmesg | grep promisc
+
+http://unix.stackexchange.com/questions/198076/enable-promiscous-mode-in-centos-7
+
+check os :: echo "I am running: `cat /etc/redhat-release` (`arch`)"
+
+
+service ntp restart
+service mysql restart
+service glance-registry restart
+service glance-api restart
+service nova-api restart
+service nova-cert restart
+service nova-consoleauth restart
+service nova-scheduler restart
+service nova-conductor restart 
+service nova-novncproxy restart
+service neutron-server restart
+service neutron-plugin-openvswitch-agent restart
+service neutron-l3-agent restart
+service neutron-dhcp-agent restart
+service neutron-metadata-agent restart
+
+network-node and compute-node config:
+My issue is solved with removing rpc_backend = rabbit from /etc/neutron/neutron.conf in my network node
+neutron agent-list shows nothing,
+https://ask.openstack.org/en/question/54557/neutron-agent-list-show-nothing/
+
+
+
+
+neutron subnet-list
+neutron port-list
+neutron net-list
+neutron router-list
+
+
+
+
+
