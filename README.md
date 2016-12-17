@@ -1,12 +1,12 @@
 # cloud
 
-# ! have five branches
+# ! have 5 branches
 #
-# master
-# aws
-# digitalocean
-# openstack
-# vmware-vcloud
+# 1) master
+# 2) aws
+# 3) digitalocean
+# 4) openstack
+# 5) vmware-vcloud
 
 #
 # ******************************************
