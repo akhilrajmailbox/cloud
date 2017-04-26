@@ -40,6 +40,8 @@ External on 192.168.1.0/24 with gateway 192.168.1.1
 make promiscous mode :: ip link set em1 promisc on
 check :: dmesg | grep promisc
 
+links :: http://discussions.citrix.com/topic/384766-cant-get-guest-into-the-host-network/#entry1959072
+
 http://unix.stackexchange.com/questions/198076/enable-promiscous-mode-in-centos-7
 
 check os :: echo "I am running: `cat /etc/redhat-release` (`arch`)"
