@@ -1,0 +1,37 @@
+
+xenserver iso ::::::::::::::::::::
+iso >>
+https://www.citrix.com/downloads/xenserver/product-software/xenserver-71-standard-edition.html
+
+installation >>
+https://www.youtube.com/watch?v=2cP4ULJuuZc
+
+
+xenserver client >> 
+https://ubuntu.pkgs.org/16.10/ubuntu-universe-amd64/openxenmanager_0.r80+dfsg-4_all.deb.html
+
+
+xenserver installation inside the vmware workstation >>
+http://www.virtualizationhowto.com/2016/01/install-xenserver-65-vmware-workstation-12/
+
+promiscous-mode error >>
+http://discussions.citrix.com/topic/384766-cant-get-guest-into-the-host-network/#entry1959072
+
+
+
+
+debian + xen iso ::::::::::::::::::::
+iso >>
+http://caesar.ftp.acc.umu.se/debian-cd/current/amd64/iso-cd/debian-8.7.1-amd64-netinst.iso
+wget http://caesar.ftp.acc.umu.se/debian-cd/current/amd64/iso-cd/debian-8.7.1-amd64-netinst.iso
+
+installation >>
+https://www.youtube.com/watch?v=n3POmlMNzvw
+http://xmodulo.com/install-xen-hypervisor.html
+
+
+
+
+template creation >>
+https://docs.citrix.com/en-us/xencenter/6-2/xs-xc-vms/xs-xc-templates-new.html
+
