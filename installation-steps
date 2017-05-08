@@ -1,0 +1,84 @@
+######### steps for installation #################
+
+== step 1 ==
+
+create a user with sudo permission
+su to that user
+
+follow the steps from the following link >>
+https://www.linode.com/docs/applications/remote-desktop/install-vnc-on-ubuntu-16-04
+(excluding step >> Starting VNC Server on Boot)
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+go to this link >> (only for see the config)
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-16-04
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+== step 2 ==
+
+install the following things >>
+sudo apt install xfce4 xfce4-goodies tightvncserver
+
+== step 3 ==
+
+mv ~/.vnc/xstartup ~/.vnc/xstartup.bak
+nano ~/.vnc/xstartup
+and add add this >>
+
+#!/bin/sh
+# Uncomment the following two lines for normal desktop:
+# unset SESSION_MANAGER
+# exec /etc/X11/xinit/xinitrc
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xsetroot -solid grey
+vncconfig -iconic &
+x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+x-window-manager &
+
+startxfce4 &
+#gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+sudo chmod +x ~/.vnc/xstartup
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+== step 4 ==
+
+for auto start at booting >>
+
+sudo nano /etc/init.d/vncserver
+and add add this >>
+
+
+#!/bin/bash
+USER=vnc
+su ${USER} -c "/usr/bin/vncserver :1"
+
+
+sudo chmod +x /etc/init.d/vncserver
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+== step 5 ==
+
+check it with reboot your system
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+links >>
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-16-04
+https://www.linode.com/docs/applications/remote-desktop/install-vnc-on-ubuntu-16-04
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
