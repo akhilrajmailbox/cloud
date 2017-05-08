@@ -1,0 +1,21 @@
+
+
+bridge >>
+https://support.citrix.com/article/CTX123489
+
+nat config >>
+http://metacores.com/xenserver-single-ip-howto.pdf
+https://www.cyberciti.biz/faq/linux-port-redirection-with-iptables/
+https://support.citrix.com/article/CTX121169?_ga=2.119741578.385575681.1493875239-2100608562.1493197988
+http://www.cisco.com/c/dam/en/us/td/docs/routers/csbr/rv320/administration/guide/en/rv32x_ag_en.pdf
+
+
+router >>
+https://crocimassimo.files.wordpress.com/2016/01/rv320_rv325-how-to-set-one-to-one-nat.pdf
+https://kb.netgear.com/24290/How-do-I-add-a-custom-port-forwarding-service-on-my-Nighthawk-router
+http://sbkb.cisco.com/CiscoSB/GetArticle.aspx?docid=e3105749e13f40a3a302802259189e07_Setting_Port_Range_Forwarding_for_the_RV042.xml
+http://sbkb.cisco.com/CiscoSB/GetArticle.aspx?docid=e4d034cfa7e3403cb8e8e7714139a79d_Configuration_of_UPnP_on_RV042.xml&pid=2&converted=0
+
+
+router proxy >>
+https://networkengineering.stackexchange.com/questions/14973/exposing-private-ip-addresses-via-a-proxy
