@@ -1,0 +1,58 @@
+
+
+Installation and configuration
+==============================
+
+export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+apt-get update ; apt-get install google-cloud-sdk
+gcloud init --console-only
+
+apt-get install kubectl
+
+
+export PROJECT_ID="$(gcloud config get-value project -q)"
+docker images
+docker tag imagename gcr.io/${PROJECT_ID}/imagename
+gcloud docker -- push gcr.io/${PROJECT_ID}/imagename
+
+
+gcloud compute forwarding-rules list
+gcloud container clusters create cluster-name
+gcloud info
+gcloud container clusters create cluster-name --project=project-id
+gcloud container clusters create cluster-name
+
+gcloud container clusters get-credentials cluster-name
+kubectl get pod
+kubectl run deploy-name --image gcr.io/${PROJECT_ID}/imagename --port 8080
+kubectl get pod
+kubectl expose deployment deploy-name --type=LoadBalancer --port 80 --target-port 8080
+kubectl get service
+kubectl get deploy
+
+
+kubectl delete service service-name
+kubectl get service
+gcloud compute forwarding-rules list
+gcloud container clusters list
+gcloud container clusters delete cluster-name
+gcloud container clusters list
+ 
+
+
+
+
+Billing in google container engine ::
+=====================================
+
+
+
+cluster
+docker registry
+external IP
+Load Balancer
+kubernetes
+
+
