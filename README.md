@@ -9,6 +9,7 @@
 # 5) vmware-vcloud
 # 6) xenserver
 # 7) vncserver
+# 8) google-cloud
 
 #
 # ******************************************
