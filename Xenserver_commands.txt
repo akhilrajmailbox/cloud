@@ -1,0 +1,6 @@
+vCPU allocation to a VM on XenServer:: 
+
+
+xe vm-list name-label=VMname
+xe vm-param-set uuid=your_vms_uuid VCPUs-at-startup=16
+xe vm-param-set uuid=your_vms_uuid VCPUs-max=16
